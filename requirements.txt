@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlalchemy
+aiomysql
+pymysql
+cryptography
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+pydantic
+pydantic-settings
+python-multipart
+alembic
