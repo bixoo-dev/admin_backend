@@ -55,6 +55,10 @@ class Auction(Base):
     id = Column(String(50), primary_key=True)
     seller_id = Column(String(50), ForeignKey('accounts.id'), nullable=False)
     product = Column(String(255))
+    qty = Column(String(50))
+    unit = Column(String(20))
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
     status = Column(String(50))
     winner_computed = Column(Boolean, default=False)
     winning_buyer_id = Column(String(50), ForeignKey('accounts.id'))
@@ -64,3 +68,16 @@ class Auction(Base):
     is_flagged = Column(Boolean, default=False)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    bids = relationship('Bid', back_populates='auction', order_by='desc(Bid.created_at)')
+
+class Bid(Base):
+    __tablename__ = 'bids'
+    id = Column(String(50), primary_key=True)
+    auction_id = Column(String(50), ForeignKey('auctions.id'), nullable=False)
+    buyer_id = Column(String(50), ForeignKey('accounts.id'), nullable=False)
+    amount = Column(Numeric(15,2), nullable=False)
+    status = Column(String(50), default='ACCEPTED') # ACCEPTED, REJECTED, CANCELLED
+    created_at = Column(DateTime, server_default=func.now())
+    
+    auction = relationship('Auction', back_populates='bids')

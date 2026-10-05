@@ -9,6 +9,7 @@ from app.routers.dashboard import router as dashboard_router
 from app.routers.trade import router as trade_router
 from app.routers.logistics import router as logistics_router
 from app.routers.system import router as system_router
+from app.routers.admins import router as admins_router
 
 app = FastAPI(title=settings.app_name)
 
@@ -29,6 +30,7 @@ app.include_router(dashboard_router, prefix="/api/v1")
 app.include_router(trade_router, prefix="/api/v1")
 app.include_router(logistics_router, prefix="/api/v1")
 app.include_router(system_router, prefix="/api/v1")
+app.include_router(admins_router, prefix="/api/v1")
 
 @app.get("/health")
 async def health_check():

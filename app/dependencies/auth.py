@@ -9,30 +9,10 @@ from app.models.user import Admin
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 
-ROLE_PERMISSIONS = {
-  "ADMIN": [
-    "accounts:verify",
-    "catalog:review",
-    "requirements:review",
-    "trips:view",
-    "cases:triage",
-  ],
-  "SUPER_ADMIN": [
-    "accounts:verify",
-    "accounts:suspend",
-    "catalog:review",
-    "catalog:override",
-    "requirements:review",
-    "requirements:override",
-    "auctions:void",
-    "orders:override",
-    "trips:view",
-    "trips:reassign",
-    "settlements:reconcile",
-    "comms:inspect",
-    "settings:manage",
-  ],
-}
+
+
+import json
+from typing import List, Union
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -54,14 +34,37 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
         raise credentials_exception
     if not admin.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+    if getattr(admin, 'status', None) == 'SUSPENDED':
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Your account has been suspended by the Super Admin.\nPlease contact the administrator for access."
+        )
     return admin
 
-def require_permission(permission: str):
+def require_permission(modules: Union[str, List[str]]):
+    """
+    Requires the current Admin to have at least one of the specified modules enabled.
+    If the user is SUPER_ADMIN, they can access everything.
+    """
+    if isinstance(modules, str):
+        modules = [modules]
+
     async def permission_checker(current_user: Admin = Depends(get_current_user)):
-        perms = ROLE_PERMISSIONS.get(current_user.role, [])
-        if permission not in perms:
-            raise HTTPException(status_code=403, detail="Insufficient permissions")
-        return current_user
+        if current_user.role == "SUPER_ADMIN":
+            # However, Super Admin shouldn't directly manage operational data, 
+            # but they have full override access in the backend logic, 
+            # and frontend routes hide this. Or we can strictly forbid them from operational endpoints:
+            # Let's just allow them to pass for API sake if they need to, or enforce strict role.
+            # The prompt says: "Super Admin should not directly manage Buyers, Sellers... Super Admin's responsibility is only Admin Directory".
+            # Thus, we should block Super Admin from operational endpoints!
+            raise HTTPException(status_code=403, detail="Super Admins cannot perform operational actions.")
+            
+        admin_modules = json.loads(current_user.modules) if current_user.modules else {}
+        for mod in modules:
+            if admin_modules.get(mod) is True:
+                return current_user
+                
+        raise HTTPException(status_code=403, detail="Insufficient module permissions")
     return permission_checker
 
 async def require_super_admin(current_user: Admin = Depends(get_current_user)):

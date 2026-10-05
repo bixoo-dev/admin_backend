@@ -16,7 +16,7 @@ async def get_accounts(
     status: str = None, 
     search: str = None,
     db: AsyncSession = Depends(get_db), 
-    current_user: Admin = Depends(get_current_user)
+    current_user: Admin = Depends(require_permission(['seller', 'buyer']))
 ):
     query = select(Account)
     
@@ -40,7 +40,7 @@ async def get_accounts(
     return {"accounts": [AccountResponse.model_validate(a) for a in accounts]}
 
 @router.get("/{id}", response_model=AccountResponse)
-async def get_account(id: str, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(get_current_user)):
+async def get_account(id: str, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission(['seller', 'buyer']))):
     result = await db.execute(select(Account).filter(Account.id == id))
     account = result.scalars().first()
     if not account:
@@ -48,7 +48,7 @@ async def get_account(id: str, db: AsyncSession = Depends(get_db), current_user:
     return AccountResponse.model_validate(account)
 
 @router.post("", response_model=AccountResponse)
-async def create_account(account_in: AccountCreate, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission('accounts:verify'))):
+async def create_account(account_in: AccountCreate, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission(['seller', 'buyer']))):
     new_account = Account(
         id=account_in.id,
         entity_type=account_in.entity_type,
@@ -78,7 +78,7 @@ async def create_account(account_in: AccountCreate, db: AsyncSession = Depends(g
     return AccountResponse.model_validate(new_account)
 
 @router.put("/{id}", response_model=AccountResponse)
-async def update_account(id: str, account_in: AccountUpdate, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission('accounts:verify'))):
+async def update_account(id: str, account_in: AccountUpdate, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission(['seller', 'buyer']))):
     result = await db.execute(select(Account).filter(Account.id == id))
     account = result.scalars().first()
     if not account:
@@ -123,7 +123,7 @@ async def delete_account(id: str, db: AsyncSession = Depends(get_db), current_us
     return {"success": True, "message": "Account deleted"}
 
 @router.post("/{id}/decisions", response_model=ActionResponse)
-async def submit_decision(id: str, decision: DecisionRequest, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission('accounts:verify'))):
+async def submit_decision(id: str, decision: DecisionRequest, db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission(['seller', 'buyer']))):
     result = await db.execute(select(Account).filter(Account.id == id))
     account = result.scalars().first()
     if not account:

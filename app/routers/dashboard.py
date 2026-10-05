@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
@@ -8,7 +8,7 @@ from app.models.trade import Auction, Order, Requirement
 from app.models.logistics import Trip, Settlement
 from app.models.system import Case, AuditLog
 from app.schemas.all import DashboardMetricsResponse
-from app.dependencies.auth import get_current_user, Admin
+from app.dependencies.auth import get_current_user, require_permission, Admin
 from datetime import datetime, timedelta
 import random
 
@@ -23,7 +23,7 @@ def parse_amount(amount_str):
         return 0.0
 
 @router.get("/metrics", response_model=DashboardMetricsResponse)
-async def get_dashboard_metrics(db: AsyncSession = Depends(get_db), current_user: Admin = Depends(get_current_user)):
+async def get_dashboard_metrics(db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission(['seller', 'buyer', 'transporter', 'auctions', 'settlements', 'cases', 'settings']))):
     # 1. Accounts
     accounts_res = await db.execute(select(Account))
     accounts = accounts_res.scalars().all()
@@ -80,7 +80,7 @@ async def get_dashboard_metrics(db: AsyncSession = Depends(get_db), current_user
     }
 
 @router.get("/buyer-seller-growth")
-async def get_growth(db: AsyncSession = Depends(get_db), current_user: Admin = Depends(get_current_user)):
+async def get_growth(db: AsyncSession = Depends(get_db), current_user: Admin = Depends(require_permission(['seller', 'buyer', 'transporter', 'auctions', 'settlements', 'cases', 'settings']))):
     # Generate realistic looking trend data ending today
     # In a real app, this would query Account.created_at grouped by date
     today = datetime.now()
