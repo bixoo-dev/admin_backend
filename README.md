@@ -16,7 +16,7 @@ This is the backend for the BIXOO project, written in FastAPI.
 
 1. Set up a virtual environment:
    ```bash
-   python -m venv venv
+   python -m venv venv 
    `.\venv\Scripts\Activate.ps1`   # or venv\\Scripts\\activate on Windows
    ```
 

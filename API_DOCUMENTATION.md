@@ -5,7 +5,8 @@
 | POST | `/api/v1/auth/login` | Authenticate and get JWT | None | None | `OAuth2PasswordRequestForm` | `{ access_token, token_type }` |
 | GET | `/api/v1/auth/me` | Get current admin details | Yes | Any | None | `AdminResponse` |
 | GET | `/api/v1/dashboard/metrics` | Dashboard statistics | Yes | Any | None | `DashboardMetricsResponse` |
-| GET | `/api/v1/admin/accounts` | List verification queue | Yes | Any | `?status=...` | `{ accounts: [...] }` |
+| GET | `/api/v1/admin/accounts` | Unified accounts directory (Buyers, Sellers, Transporters) | Yes | `buyer`, `seller`, `transporter`, `SUPER_ADMIN` | `?entity_type=...&verification_status=...&account_status=...&search=...&page=...&page_size=...` | `{ accounts: [...], total, page, page_size, total_pages }` |
+| GET | `/api/v1/admin/accounts/{id}` | Get account dossier details | Yes | `buyer`, `seller`, `transporter`, `SUPER_ADMIN` | None | `AccountResponse` |
 | POST | `/api/v1/admin/accounts/{id}/decisions` | Approve/Suspend account | Yes | `accounts:verify` | `{ actionType, reasonCode, ... }` | `{ success, message }` |
 | GET | `/api/v1/admin/catalog` | List catalog items | Yes | Any | None | `{ listings: [...] }` |
 | GET | `/api/v1/admin/requirements` | List requirements | Yes | Any | None | `{ requirements: [...] }` |

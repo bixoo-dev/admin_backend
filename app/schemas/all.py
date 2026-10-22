@@ -62,6 +62,8 @@ class AccountBase(BaseModel):
 
     verification_status: str
 
+    account_status: Optional[str] = 'ACTIVE'
+
 
 
 class AccountCreate(AccountBase):
@@ -106,6 +108,8 @@ class AccountResponse(AccountBase):
 
     verificationStatus: str = ''
 
+    accountStatus: str = 'ACTIVE'
+
     contactNumber: str = ''
 
     registrationNumber: str = ''
@@ -130,7 +134,13 @@ class AccountResponse(AccountBase):
 
         self.fleetDocsStatus = self.fleet_docs_status or ''
 
-        
+        # Account status resolution
+        if (self.verification_status or '').upper() == 'SUSPENDED':
+            self.account_status = 'SUSPENDED'
+            self.accountStatus = 'SUSPENDED'
+        else:
+            self.account_status = getattr(self, 'account_status', None) or 'ACTIVE'
+            self.accountStatus = self.account_status
 
         if self.contact_number and len(self.contact_number) > 4:
 
@@ -147,6 +157,14 @@ class AccountResponse(AccountBase):
     class Config:
 
         from_attributes = True
+
+
+class PaginatedAccountsResponse(BaseModel):
+    accounts: list[AccountResponse]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
 
 
 

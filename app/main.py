@@ -25,6 +25,7 @@ app.add_middleware(
 # API Routers
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(accounts_router, prefix="/api/v1")
+app.include_router(accounts_router, prefix="/api")
 app.include_router(auctions_router, prefix="/api/v1")
 app.include_router(dashboard_router, prefix="/api/v1")
 app.include_router(trade_router, prefix="/api/v1")

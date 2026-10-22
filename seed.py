@@ -51,15 +51,18 @@ async def seed():
         db.add_all(admins)
         await db.commit()
 
-        # Accounts
+        # Accounts (Buyers, Sellers, and Transporters)
         accounts = [
-            Account(id='USR-1022', entity_type='BUYER', business_name='AgriCorp India', contact_number='9876543210', verification_status='VERIFIED'),
-            Account(id='USR-3301', entity_type='BUYER', business_name='Global Mills', contact_number='9876543211', verification_status='VERIFIED'),
-            Account(id='USR-4410', entity_type='BUYER', business_name='Local Retailers', contact_number='9876543212', verification_status='UNVERIFIED'),
-            Account(id='USR-8821', entity_type='SELLER', business_name='Sunrise Farms', contact_number='9876543220', verification_status='VERIFIED'),
-            Account(id='USR-9044', entity_type='SELLER', business_name='Green Valley', contact_number='9876543221', verification_status='VERIFIED'),
-            Account(id='USR-7011', entity_type='SELLER', business_name='Industrial Copper', contact_number='9876543222', verification_status='SUSPENDED'),
-            Account(id='USR-7731', entity_type='SELLER', business_name='New Age Farming', contact_number='9876543223', verification_status='UNVERIFIED'),
+            Account(id='USR-1022', entity_type='BUYER', business_name='AgriCorp India', contact_number='9876543210', email='procurement@agricorp.in', gstin='33AAAAA1234A1Z5', registration_number='CIN-U01100TN2018PTC12044', address='Survey No. 44/2, Agro Industrial Park, Coimbatore, TN', verification_status='VERIFIED'),
+            Account(id='USR-3301', entity_type='BUYER', business_name='Global Mills', contact_number='9876543211', email='supplychain@globalmills.com', gstin='29BBBBB5678B1Z2', registration_number='CIN-U15310KA2015PLC08912', address='Plot 18, KIADB Industrial Area, Whitefield, Bengaluru, KA', verification_status='VERIFIED'),
+            Account(id='USR-4410', entity_type='BUYER', business_name='Local Retailers', contact_number='9876543212', email='ops@localretailers.coop', gstin='33CCCCC9101C1Z8', registration_number='COOP-TN-CHE-2021-99', address='No. 89 Market Road, Koyambedu Wholesale Complex, Chennai, TN', verification_status='UNVERIFIED'),
+            Account(id='USR-8821', entity_type='SELLER', business_name='Sunrise Farms', contact_number='9876543220', email='contact@sunrisefarms.in', gstin='33FFFFF4321F1Z3', registration_number='CIN-U01409TN2019PTC13098', address='SF No. 120, Thondamuthur Road, Pollachi, TN', verification_status='VERIFIED'),
+            Account(id='USR-9044', entity_type='SELLER', business_name='Green Valley', contact_number='9876543221', email='sales@greenvalleyagro.com', gstin='29GGGGG8765G1Z1', registration_number='CIN-U01111KA2016PLC09123', address='Estate Sector 4, Hassan Agro SEZ, Hassan, KA', verification_status='VERIFIED'),
+            Account(id='USR-7011', entity_type='SELLER', business_name='Industrial Copper', contact_number='9876543222', email='accounts@indcopper.co.in', gstin='33HHHHH9988H1Z7', registration_number='CIN-U27201TN2012PTC08541', address='SIDCO Industrial Estate, Guindy, Chennai, TN', verification_status='SUSPENDED'),
+            Account(id='USR-7731', entity_type='SELLER', business_name='New Age Farming', contact_number='9876543223', email='info@newagefarming.org', gstin='27IIIII3456I1Z0', registration_number='CIN-U01400MH2022PTC37890', address='Agro Innovation Center, Baramati, Pune, MH', verification_status='UNVERIFIED'),
+            Account(id='USR-5510', entity_type='TRANSPORTER', business_name='Veloce Logistics Fleet', contact_number='9876543230', email='dispatch@velocefleet.in', gstin='33KKKKK1122K1Z8', registration_number='TN-LOG-2024-88', address='Plot 45, SIPCOT Transport Hub, Coimbatore, TN', fleet_docs_status='ALL_DOCS_VERIFIED', verification_status='VERIFIED'),
+            Account(id='USR-5520', entity_type='TRANSPORTER', business_name='Kaveri Logistics Services', contact_number='9876543231', email='operations@kaverilogistics.com', gstin='29LLLLL3344L1Z2', registration_number='KA-LOG-2023-14', address='No. 12 Outer Ring Road Transport Depot, Bengaluru, KA', fleet_docs_status='EPOD_COMPLIANT', verification_status='VERIFIED'),
+            Account(id='USR-5530', entity_type='TRANSPORTER', business_name='SpeedWings Freight Corp', contact_number='9876543232', email='support@speedwings.co', gstin='27MMMMM5566M1Z5', registration_number='MH-LOG-2025-09', address='Warehouse Zone 3, Bhiwandi Logistics Park, Thane, MH', fleet_docs_status='PERMITS_PENDING', verification_status='UNVERIFIED'),
         ]
         db.add_all(accounts)
         await db.commit()

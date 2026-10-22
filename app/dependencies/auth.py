@@ -51,13 +51,7 @@ def require_permission(modules: Union[str, List[str]]):
 
     async def permission_checker(current_user: Admin = Depends(get_current_user)):
         if current_user.role == "SUPER_ADMIN":
-            # However, Super Admin shouldn't directly manage operational data, 
-            # but they have full override access in the backend logic, 
-            # and frontend routes hide this. Or we can strictly forbid them from operational endpoints:
-            # Let's just allow them to pass for API sake if they need to, or enforce strict role.
-            # The prompt says: "Super Admin should not directly manage Buyers, Sellers... Super Admin's responsibility is only Admin Directory".
-            # Thus, we should block Super Admin from operational endpoints!
-            raise HTTPException(status_code=403, detail="Super Admins cannot perform operational actions.")
+            return current_user
             
         admin_modules = json.loads(current_user.modules) if current_user.modules else {}
         for mod in modules:
